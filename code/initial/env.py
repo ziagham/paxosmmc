@@ -6,14 +6,19 @@ from process import Process
 from replica import Replica
 from utils import *
 
-NACCEPTORS = 3
-NREPLICAS = 2
-NLEADERS = 2
-NREQUESTS = 10
-NCONFIGS = 2
+# NACCEPTORS = 3
+# NREPLICAS = 2
+# NLEADERS = 2
+# NREQUESTS = 10
+# NCONFIGS = 2
 
 class Env:
-  def __init__(self):
+  def __init__(self, acceptors=3, replicas=2, leaders=2, requests=10, configs=2):
+    self.NACCEPTORS = acceptors
+    self.NREPLICAS = replicas
+    self.NLEADERS = leaders
+    self.NREQUESTS = requests
+    self.NCONFIGS = configs
     self.procs = {}
 
   def sendMessage(self, dst, msg):
@@ -31,33 +36,33 @@ class Env:
     initialconfig = Config([], [], [])
     c = 0
 
-    for i in range(NREPLICAS):
+    for i in range(self.NREPLICAS):
       pid = "replica %d" % i
       Replica(self, pid, initialconfig)
       initialconfig.replicas.append(pid)
-    for i in range(NACCEPTORS):
+    for i in range(self.NACCEPTORS):
       pid = "acceptor %d.%d" % (c,i)
       Acceptor(self, pid)
       initialconfig.acceptors.append(pid)
-    for i in range(NLEADERS):
+    for i in range(self.NLEADERS):
       pid = "leader %d.%d" % (c,i)
       Leader(self, pid, initialconfig)
       initialconfig.leaders.append(pid)
-    for i in range(NREQUESTS):
+    for i in range(self.NREQUESTS):
       pid = "client %d.%d" % (c,i)
       for r in initialconfig.replicas:
         cmd = Command(pid,0,"operation %d.%d" % (c,i))
         self.sendMessage(r,RequestMessage(pid,cmd))
         time.sleep(1)
 
-    for c in range(1, NCONFIGS):
+    for c in range(1, self.NCONFIGS):
       # Create new configuration
       config = Config(initialconfig.replicas, [], [])
-      for i in range(NACCEPTORS):
+      for i in range(self.NACCEPTORS):
         pid = "acceptor %d.%d" % (c,i)
         Acceptor(self, pid)
         config.acceptors.append(pid)
-      for i in range(NLEADERS):
+      for i in range(self.NLEADERS):
         pid = "leader %d.%d" % (c,i)
         Leader(self, pid, config)
         config.leaders.append(pid)
@@ -73,7 +78,7 @@ class Env:
           cmd = Command(pid,0,"operation noop")
           self.sendMessage(r, RequestMessage(pid, cmd))
           time.sleep(1)
-      for i in range(NREQUESTS):
+      for i in range(self.NREQUESTS):
         pid = "client %d.%d" % (c,i)
         for r in config.replicas:
           cmd = Command(pid,0,"operation %d.%d"%(c,i))
@@ -88,13 +93,13 @@ class Env:
     sys.stderr.flush()
     os._exit(exitcode)
 
-def main():
-  e = Env()
-  e.run()
-  signal.signal(signal.SIGINT, e.terminate_handler)
-  signal.signal(signal.SIGTERM, e.terminate_handler)
-  signal.pause()
+# def main():
+#   e = Env()
+#   e.run()
+#   signal.signal(signal.SIGINT, e.terminate_handler)
+#   signal.signal(signal.SIGTERM, e.terminate_handler)
+#   signal.pause()
 
 
-if __name__=='__main__':
-  main()
+# if __name__=='__main__':
+#   main()
