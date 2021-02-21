@@ -27,12 +27,14 @@ class Commander(Process):
         if self.ballot_number == msg.ballot_number and msg.src in waitfor:
           waitfor.remove(msg.src)
           if len(waitfor) < float(len(self.acceptors))/2:
+            #self.env.addAcceptedNumber()
             for r in self.replicas:
               self.sendMessage(r, DecisionMessage(self.id,
                                                   self.slot_number,
                                                   self.command))
             return
         else:
+          #self.env.addAcceptedNumber()
           self.sendMessage(self.leader, PreemptedMessage(self.id,
                                                          msg.ballot_number))
           return

@@ -25,6 +25,7 @@ class Acceptor(Process):
           self.accepted.add(PValue(msg.ballot_number,
                                    msg.slot_number,
                                    msg.command))
+          #self.env.addAcceptedNumber()
         self.sendMessage(msg.src,
                          P2bMessage(self.id,
                                     self.ballot_number,

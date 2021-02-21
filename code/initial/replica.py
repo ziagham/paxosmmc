@@ -48,6 +48,8 @@ class Replica(Process):
         self.decisions[msg.slot_number] = msg.command
         while self.slot_out in self.decisions:
           if self.slot_out in self.proposals:
+            #print "self.slot_in: ", self.slot_in
+            #self.env.addAcceptedNumber()
             if self.proposals[self.slot_out]!=self.decisions[self.slot_out]:
               self.requests.append(self.proposals[self.slot_out])
             del self.proposals[self.slot_out]
