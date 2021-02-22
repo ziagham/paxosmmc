@@ -131,11 +131,11 @@ class Env:
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="test_paxosmmc", description="the test automation script for paxosmmc")
-    parser.add_argument("--replicas", type=int, default=2, help="The number of replicas (default {})".format(2))
-    parser.add_argument("--leaders", type=int, default=2, help="The number of leaders (default {})".format(2))
-    parser.add_argument("--acceptors", type=int, default=3, help="The number of acceptors (default {})".format(3))
-    parser.add_argument("--configs", type=int, default=2, help="The number of configs (default {})".format(2))
-    parser.add_argument("--clients", type=int, default=10, help="The size of clients (default {})".format(10))
+    parser.add_argument("--replicas","-r", type=int, default=2, help="The number of replicas (default {})".format(2))
+    parser.add_argument("--leaders", "-l", type=int, default=2, help="The number of leaders (default {})".format(2))
+    parser.add_argument("--acceptors","-a", type=int, default=3, help="The number of acceptors (default {})".format(3))
+    parser.add_argument("--configs","-cf", type=int, default=2, help="The number of configs (default {})".format(2))
+    parser.add_argument("--clients","-c", type=int, default=10, help="The size of clients (default {})".format(10))
     return parser.parse_args()
 
 def main(args):
