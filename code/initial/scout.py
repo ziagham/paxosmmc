@@ -23,7 +23,9 @@ class Scout(Process):
           pvalues.update(msg.accepted)
           waitfor.remove(msg.src)
           if len(waitfor) < float(len(self.acceptors))/2:
-            self.env.addAcceptedNumber()
+            #print msg.accepted
+            #self.env.d[self.slot_number] += 1
+            #self.env.addAcceptedNumber()
             self.sendMessage(self.leader,
                              AdoptedMessage(self.id,
                                             self.ballot_number,
