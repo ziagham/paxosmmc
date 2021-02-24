@@ -17,7 +17,6 @@ class Env:
     self.NCONFIGS = configs
     self.NREQUESTS = clients
     self.procs = {}
-    self.acceptedNumber = 0
     self.d = {}
     self.od = {}
     self.time = {}
