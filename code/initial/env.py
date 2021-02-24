@@ -124,6 +124,7 @@ class Env:
     fig, ax = plt.subplots()
     ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
     plt.show()
+    savePdf()
 
   def terminate_handler(self, signal, frame):
     #raw_input("Press Enter to shutdown paxos cluster ...")
@@ -134,6 +135,11 @@ class Env:
     sys.stderr.flush()
     os._exit(exitcode)
 
+def savePdf():
+    if (args.nopdf is False):
+      f = plt.figure()
+      f.savefig("figure.pdf", bbox_inches='tight')
+
 def parse_args():
     parser = argparse.ArgumentParser(prog="test_paxosmmc", description="the test automation script for paxosmmc")
     parser.add_argument("--replicas","-r", type=int, default=2, help="The number of replicas (default {})".format(2))
@@ -141,6 +147,7 @@ def parse_args():
     parser.add_argument("--acceptors","-a", type=int, default=3, help="The number of acceptors (default {})".format(3))
     parser.add_argument("--configs","-cf", type=int, default=2, help="The number of configs (default {})".format(2))
     parser.add_argument("--clients","-c", type=int, default=1, help="The upper threshold of concurrent clients (default {})".format(10))
+    parser.add_argument("--nopdf", type=bool,default=False,const=True, nargs="?" , help="saving of pdf (default {})".format(False))
     return parser.parse_args()
 
 def main(args):
