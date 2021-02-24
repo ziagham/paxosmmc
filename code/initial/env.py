@@ -125,6 +125,9 @@ class Env:
     ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
     plt.show()
 
+    if (args.nopdf is False):
+      fig.savefig("figure.pdf", bbox_inches='tight')
+
   def terminate_handler(self, signal, frame):
     #raw_input("Press Enter to shutdown paxos cluster ...")
     self._graceexit()
@@ -141,6 +144,7 @@ def parse_args():
     parser.add_argument("--acceptors","-a", type=int, default=3, help="The number of acceptors (default {})".format(3))
     parser.add_argument("--configs","-cf", type=int, default=2, help="The number of configs (default {})".format(2))
     parser.add_argument("--clients","-c", type=int, default=1, help="The upper threshold of concurrent clients (default {})".format(10))
+    parser.add_argument("--nopdf", type=bool,default=False,const=True, nargs="?" , help="saving of pdf (default {})".format(False))
     return parser.parse_args()
 
 def main(args):
