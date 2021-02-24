@@ -15,7 +15,6 @@ class Acceptor(Process):
       msg = self.getNextMessage()
       if isinstance(msg, P1aMessage):
         if msg.ballot_number > self.ballot_number:
-          #self.env.addAcceptedNumber()
           self.ballot_number = msg.ballot_number
         self.sendMessage(msg.src,
                          P1bMessage(self.id,
@@ -26,7 +25,6 @@ class Acceptor(Process):
           self.accepted.add(PValue(msg.ballot_number,
                                    msg.slot_number,
                                    msg.command))
-          #self.env.addAcceptedNumber()
         self.sendMessage(msg.src,
                          P2bMessage(self.id,
                                     self.ballot_number,

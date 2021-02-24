@@ -28,6 +28,12 @@ class Replica(Process):
       self.slot_in +=1
 
   def perform(self, cmd):
+    key = cmd.req_id
+    if key in self.env.d:
+      #print key, self.env.time[key]
+      if self.env.time[key] == True:
+        self.env.d[key] += 1
+
     for s in range(1, self.slot_out):
       if self.decisions[s] == cmd:
         self.slot_out += 1
@@ -35,6 +41,7 @@ class Replica(Process):
     if isinstance(cmd, ReconfigCommand):
       self.slot_out += 1
       return
+
     print self.id, ": perform",self.slot_out, ":", cmd
     self.slot_out += 1
 
@@ -48,8 +55,6 @@ class Replica(Process):
         self.decisions[msg.slot_number] = msg.command
         while self.slot_out in self.decisions:
           if self.slot_out in self.proposals:
-            #print "self.slot_in: ", self.slot_in
-            #self.env.addAcceptedNumber()
             if self.proposals[self.slot_out]!=self.decisions[self.slot_out]:
               self.requests.append(self.proposals[self.slot_out])
             del self.proposals[self.slot_out]

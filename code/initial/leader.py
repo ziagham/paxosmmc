@@ -31,7 +31,6 @@ class Leader(Process):
                       self.ballot_number, msg.slot_number, msg.command)
       elif isinstance(msg, AdoptedMessage):
         if self.ballot_number == msg.ballot_number:
-          #self.env.addAcceptedNumber()
           pmax = {}
           for pv in msg.accepted:
             if pv.slot_number not in pmax or \
