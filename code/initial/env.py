@@ -95,7 +95,7 @@ class Env:
     raw_input("\nPress Enter to start evaluation...\n")
 
     start_time = time.time()
-    for c in range(0, self.NREQUESTS+1, 10):
+    for c in range(0, self.NREQUESTS+1, 1):
       self.d[c] = 0
       self.time[c] = True
       self._sendConcurrentRequests(c, cfg.replicas)
