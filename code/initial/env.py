@@ -126,8 +126,8 @@ class Env:
       fig.savefig("figure.pdf", bbox_inches='tight')
 
   def terminate_handler(self, signal, frame):
-    a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
-    print a
+    # a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
+    # print a
     self._graceexit()
 
   def _graceexit(self, exitcode=0):
