@@ -9,13 +9,13 @@ from clients import Clients
 from utils import *
 
 class Env:
-  def __init__(self, replicas, leaders, acceptors, configs, clients):
+  def __init__(self, replicas, leaders, acceptors, configs, clients, nopdf):
     self.NACCEPTORS = acceptors
     self.NREPLICAS = replicas
     self.NLEADERS = leaders
-    #self.NCLIENTS = clients
     self.NCONFIGS = configs
     self.NREQUESTS = clients
+    self.nopdf = nopdf
     self.procs = {}
     self.d = {}
     self.od = {}
@@ -73,17 +73,15 @@ class Env:
     return config
 
   def _sendConcurrentRequests(self, to, replicas):
-    #num = (self.NREQUESTS*c)+1
     c = to
-    #print key
-    #self.time[c] = True
+    self.time[c] = True
     for i in range(1, c+1):
       pid = "client %d.%d" % (c,i)
       for r in replicas:
         cmd = Command(pid,c,"operation %d.%d" % (c,i))
         self.sendMessage(r,RequestMessage(pid,cmd))
-        time.sleep(1)
-    #self.time[c] = False
+        time.sleep(0.5)
+    self.time[c] = False
 
   def run(self):
     initialconfig = Config([], [], [])
@@ -97,11 +95,11 @@ class Env:
     raw_input("\nPress Enter to start evaluation...\n")
 
     start_time = time.time()
-    for c in range(1, self.NREQUESTS+1):
+    for c in range(0, self.NREQUESTS+1, 10):
       self.d[c] = 0
-      #self.time[c] = True
+      self.time[c] = True
       self._sendConcurrentRequests(c, cfg.replicas)
-      #Clients(self, c, self.NREQUESTS, cfg.replicas)
+      #Clients(self, c, cfg.replicas)
 
     end_time = time.time()
     total = end_time - start_time
@@ -124,11 +122,12 @@ class Env:
     ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
     plt.show()
 
-    if (args.nopdf is False):
+    if (self.nopdf == False):
       fig.savefig("figure.pdf", bbox_inches='tight')
 
   def terminate_handler(self, signal, frame):
-    #raw_input("Press Enter to shutdown paxos cluster ...")
+    a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
+    print a
     self._graceexit()
 
   def _graceexit(self, exitcode=0):
@@ -143,11 +142,11 @@ def parse_args():
     parser.add_argument("--acceptors","-a", type=int, default=3, help="The number of acceptors (default {})".format(3))
     parser.add_argument("--configs","-cf", type=int, default=2, help="The number of configs (default {})".format(2))
     parser.add_argument("--clients","-c", type=int, default=1, help="The upper threshold of concurrent clients (default {})".format(10))
-    parser.add_argument("--nopdf", type=bool,default=False,const=True, nargs="?" , help="saving of pdf (default {})".format(False))
+    parser.add_argument("--nopdf", type=bool,default=False,const=True, nargs="?" , help="Saving of pdf (default {})".format(False))
     return parser.parse_args()
 
 def main(args):
-  e = Env(args.replicas, args.leaders, args.acceptors, args.configs, args.clients)
+  e = Env(args.replicas, args.leaders, args.acceptors, args.configs, args.clients, args.nopdf)
   e.run()
   signal.signal(signal.SIGINT, e.terminate_handler)
   signal.signal(signal.SIGTERM, e.terminate_handler)

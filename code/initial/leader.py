@@ -38,13 +38,13 @@ class Leader(Process):
               pmax[pv.slot_number] = pv.ballot_number
               self.proposals[pv.slot_number] = pv.command
 
-          for sn in self.proposals:
-            Commander(self.env,
-                      "commander:%s:%s:%s" % (str(self.id),
-                                              str(self.ballot_number),
-                                              str(sn)),
-                      self.id, self.config.acceptors, self.config.replicas,
-                      self.ballot_number, sn, self.proposals.get(sn))
+          # for sn in self.proposals:
+          #   Commander(self.env,
+          #             "commander:%s:%s:%s" % (str(self.id),
+          #                                     str(self.ballot_number),
+          #                                     str(sn)),
+          #             self.id, self.config.acceptors, self.config.replicas,
+          #             self.ballot_number, sn, self.proposals.get(sn))
           self.active = True
       elif isinstance(msg, PreemptedMessage):
         if msg.ballot_number > self.ballot_number:
