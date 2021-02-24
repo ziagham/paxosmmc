@@ -37,6 +37,7 @@ class Leader(Process):
                   pmax[pv.slot_number] < pv.ballot_number:
               pmax[pv.slot_number] = pv.ballot_number
               self.proposals[pv.slot_number] = pv.command
+
           for sn in self.proposals:
             Commander(self.env,
                       "commander:%s:%s:%s" % (str(self.id),

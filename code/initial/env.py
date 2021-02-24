@@ -13,9 +13,9 @@ class Env:
     self.NACCEPTORS = acceptors
     self.NREPLICAS = replicas
     self.NLEADERS = leaders
-    self.NCLIENTS = clients
+    #self.NCLIENTS = clients
     self.NCONFIGS = configs
-    self.NREQUESTS = 10
+    self.NREQUESTS = clients
     self.procs = {}
     self.acceptedNumber = 0
     self.d = {}
@@ -73,18 +73,18 @@ class Env:
 
     return config
 
-  def _sendConcurrentRequests(self, id, c, replicas):
-    num = (self.NREQUESTS*c)+1
-    key = self.NREQUESTS*c
+  def _sendConcurrentRequests(self, to, replicas):
+    #num = (self.NREQUESTS*c)+1
+    c = to
     #print key
-    self.time[key] = True
-    for i in range(1, num):
+    #self.time[c] = True
+    for i in range(1, c+1):
       pid = "client %d.%d" % (c,i)
       for r in replicas:
-        cmd = Command(pid,id,"operation %d.%d" % (c,i))
+        cmd = Command(pid,c,"operation %d.%d" % (c,i))
         self.sendMessage(r,RequestMessage(pid,cmd))
         time.sleep(1)
-    self.time[key] = False
+    #self.time[c] = False
 
   def run(self):
     initialconfig = Config([], [], [])
@@ -98,10 +98,10 @@ class Env:
     raw_input("\nPress Enter to start evaluation...\n")
 
     start_time = time.time()
-    for c in range(1, self.NCLIENTS+1):
-      self.d[self.NREQUESTS * c] = 0
-      self.time[self.NREQUESTS * c] = True
-      self._sendConcurrentRequests(self.NREQUESTS * c, c, cfg.replicas)
+    for c in range(1, self.NREQUESTS+1):
+      self.d[c] = 0
+      #self.time[c] = True
+      self._sendConcurrentRequests(c, cfg.replicas)
       #Clients(self, c, self.NREQUESTS, cfg.replicas)
 
     end_time = time.time()
@@ -110,10 +110,10 @@ class Env:
 
     #print self.time
 
-    t = all(value == False for value in self.time.values())
+    #t = all(value == False for value in self.time.values())
 
-    if t == True:
-      self._drawGraph()
+    #if t == True:
+    self._drawGraph()
 
   def _drawGraph(self):
     a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
