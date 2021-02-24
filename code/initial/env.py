@@ -124,7 +124,9 @@ class Env:
     fig, ax = plt.subplots()
     ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
     plt.show()
-    savePdf()
+
+    if (args.nopdf is False):
+      fig.savefig("figure.pdf", bbox_inches='tight')
 
   def terminate_handler(self, signal, frame):
     #raw_input("Press Enter to shutdown paxos cluster ...")
@@ -134,11 +136,6 @@ class Env:
     sys.stdout.flush()
     sys.stderr.flush()
     os._exit(exitcode)
-
-def savePdf():
-    if (args.nopdf is False):
-      f = plt.figure()
-      f.savefig("figure.pdf", bbox_inches='tight')
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="test_paxosmmc", description="the test automation script for paxosmmc")
