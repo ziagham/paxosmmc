@@ -7,6 +7,7 @@ from process import Process
 from replica import Replica
 from clients import Clients
 from utils import *
+from datetime import datetime
 
 class Env:
   def __init__(self, replicas, leaders, acceptors, configs, clients, nopdf):
@@ -150,7 +151,7 @@ class Env:
     plt.show()
 
     if (self.nopdf == False):
-      fig.savefig("figure.pdf", bbox_inches='tight')
+      fig.savefig("figure"+str(datetime.now())+".pdf", bbox_inches='tight')
 
   def terminate_handler(self, signal, frame):
     # a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
