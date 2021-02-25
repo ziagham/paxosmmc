@@ -7,6 +7,7 @@ from process import Process
 from replica import Replica
 #from clients import Clients
 from utils import *
+from datetime import datetime
 
 # NACCEPTORS = 3
 # NREPLICAS = 2
@@ -130,7 +131,7 @@ class Env:
         plt.show()
 
         if (self.nopdf == False):
-            fig.savefig("figure.pdf", bbox_inches='tight')
+            fig.savefig("figure_"+str(datetime.now())+".pdf", bbox_inches='tight')
 
 
         # # Create replicas
