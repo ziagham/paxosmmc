@@ -66,8 +66,7 @@ class Replica(Process):
         print self.id, ": perform", self.slot_out, ":", cmd
         key = cmd.req_id
         if key in self.env.d:
-        # print key, self.env.time[key]
-        #if self.env.time[key] == True:
+            #if self.env.time[key] == True:
             self.env.d[key] += 1
 
         self.slot_out += 1

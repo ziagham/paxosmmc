@@ -84,14 +84,14 @@ class Env:
 
     def _sendConcurrentRequests(self, to, config):
         c = to
-        #self.time[c] = True
+        self.time[c] = True
         for i in range(1, c+1):
             pid = "client %d.%d" % (c,i)
             for r in config.replicas:
                 cmd = Command(pid,c,"operation %d.%d" % (c,i))
                 self.sendMessage(r,RequestMessage(pid,cmd))
                 time.sleep(1)
-        #self.time[c] = False
+        self.time[c] = False
 
 
     def run(self):
@@ -106,7 +106,7 @@ class Env:
         raw_input("\nPress Enter to start evaluation...\n")
 
         start_time = time.time()
-        for c in range(0, self.NREQUESTS+1, 1):
+        for c in range(0, self.NREQUESTS+1, 2):
             self.d[c] = 0
             #self.time[c] = True
             #cfg = self._reConfig(c, initialconfig)
@@ -117,6 +117,8 @@ class Env:
         total = end_time - start_time
         print "Elapsed time: ", total
 
+        #t = all(value == False for value in self.time.values())
+        #if t == True:
         self._drawGraph()
 
     def _drawGraph(self):
@@ -192,7 +194,7 @@ class Env:
         #             time.sleep(1)
 
     def terminate_handler(self, signal, frame):
-        a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
+        a = {k: v / (self.NREPLICAS) for k, v in self.d.iteritems()}
         print a
         self._graceexit()
 
