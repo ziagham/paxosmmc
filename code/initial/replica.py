@@ -28,12 +28,6 @@ class Replica(Process):
       self.slot_in +=1
 
   def perform(self, cmd):
-    key = cmd.req_id
-    if key in self.env.d:
-      # print key, self.env.time[key]
-      #if self.env.time[key] == True:
-      self.env.d[key] += 1
-
     for s in range(1, self.slot_out):
       if self.decisions[s] == cmd:
         self.slot_out += 1
@@ -43,6 +37,12 @@ class Replica(Process):
       return
 
     print self.id, ": perform",self.slot_out, ":", cmd
+    key = cmd.req_id
+    if key in self.env.d:
+      # print key, self.env.time[key]
+      #if self.env.time[key] == True:
+      self.env.d[key] += 1
+
     self.slot_out += 1
 
   def body(self):

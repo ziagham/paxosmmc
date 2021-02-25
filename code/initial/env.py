@@ -86,13 +86,13 @@ class Env:
     # Send reconfiguration request
     for r in config.replicas:
       pid = "master %d.%d" % (c,i)
-      cmd = ReconfigCommand(pid,0,str(config))
+      cmd = ReconfigCommand(pid,-1,str(config))
       self.sendMessage(r, RequestMessage(pid, cmd))
       time.sleep(1)
-    for i in range(WINDOW-1):
+    for i in range(1):
       pid = "master %d.%d" % (c,i)
       for r in config.replicas:
-        cmd = Command(pid,0,"operation noop")
+        cmd = Command(pid,-1,"operation noop")
         self.sendMessage(r, RequestMessage(pid, cmd))
         time.sleep(1)
 
@@ -100,7 +100,7 @@ class Env:
 
   def _sendConcurrentRequests(self, to, config):
     c = to
-    self.time[c] = True
+    #self.time[c] = True
     for i in range(1, c+1):
       pid = "client %d.%d" % (c,i)
       for r in config.replicas:
@@ -121,9 +121,9 @@ class Env:
     raw_input("\nPress Enter to start evaluation...\n")
 
     start_time = time.time()
-    for c in range(1, self.NREQUESTS+1, 1):
+    for c in range(0, self.NREQUESTS+1, 2):
       self.d[c] = 0
-      self.time[c] = True
+      #self.time[c] = True
       cfg = self._reConfig(c, initialconfig)
       self._sendConcurrentRequests(c, cfg)
       #Clients(self, c, cfg.replicas)
@@ -153,8 +153,8 @@ class Env:
       fig.savefig("figure.pdf", bbox_inches='tight')
 
   def terminate_handler(self, signal, frame):
-    # a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
-    # print a
+    a = {k: v / (self.NREPLICAS*self.NLEADERS) for k, v in self.d.iteritems()}
+    print a
     self._graceexit()
 
   def _graceexit(self, exitcode=0):
@@ -168,7 +168,7 @@ def parse_args():
     parser.add_argument("--leaders", "-l", type=int, default=2, help="The number of leaders (default {})".format(2))
     parser.add_argument("--acceptors","-a", type=int, default=3, help="The number of acceptors (default {})".format(3))
     parser.add_argument("--configs","-cf", type=int, default=2, help="The number of configs (default {})".format(2))
-    parser.add_argument("--clients","-c", type=int, default=1, help="The upper threshold of concurrent clients (default {})".format(10))
+    parser.add_argument("--clients","-c", type=int, default=10, help="The upper threshold of concurrent clients (default {})".format(10))
     parser.add_argument("--nopdf", type=bool,default=False,const=True, nargs="?" , help="Saving of pdf (default {})".format(False))
     return parser.parse_args()
 
