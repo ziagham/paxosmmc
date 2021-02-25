@@ -176,9 +176,7 @@ def parse_args():
 def main(args):
   e = Env(args.replicas, args.leaders, args.acceptors, args.configs, args.clients, args.nopdf)
   e.run()
-  signal.signal(signal.SIGINT, e.terminate_handler)
-  signal.signal(signal.SIGTERM, e.terminate_handler)
-  signal.pause()
+  e._graceexit(0)
 
 if __name__=='__main__':
   args = parse_args() 
