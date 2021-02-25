@@ -31,8 +31,8 @@ class Replica(Process):
     key = cmd.req_id
     if key in self.env.d:
       # print key, self.env.time[key]
-      if self.env.time[key] == True:
-        self.env.d[key] += 1
+      #if self.env.time[key] == True:
+      self.env.d[key] += 1
 
     for s in range(1, self.slot_out):
       if self.decisions[s] == cmd:

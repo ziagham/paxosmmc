@@ -46,42 +46,68 @@ class Env:
       Leader(self, pid, initialconfig)
       initialconfig.leaders.append(pid)
 
-    for c in range(1, self.NCONFIGS):
-      # Create new configuration
-      config = Config(initialconfig.replicas, [], [])
-      for i in range(self.NACCEPTORS):
-        pid = "acceptor %d.%d" % (c,i)
-        Acceptor(self, pid)
-        config.acceptors.append(pid)
-      for i in range(self.NLEADERS):
-        pid = "leader %d.%d" % (c,i)
-        Leader(self, pid, config)
-        config.leaders.append(pid)
-      # Send reconfiguration request
+    # for c in range(1, self.NCONFIGS):
+    #   # Create new configuration
+    #   config = Config(initialconfig.replicas, [], [])
+    #   for i in range(self.NACCEPTORS):
+    #     pid = "acceptor %d.%d" % (c,i)
+    #     Acceptor(self, pid)
+    #     config.acceptors.append(pid)
+    #   for i in range(self.NLEADERS):
+    #     pid = "leader %d.%d" % (c,i)
+    #     Leader(self, pid, config)
+    #     config.leaders.append(pid)
+    #   # Send reconfiguration request
+    #   for r in config.replicas:
+    #     pid = "master %d.%d" % (c,i)
+    #     cmd = ReconfigCommand(pid,0,str(config))
+    #     self.sendMessage(r, RequestMessage(pid, cmd))
+    #     time.sleep(1)
+    #   for i in range(WINDOW-1):
+    #     pid = "master %d.%d" % (c,i)
+    #     for r in config.replicas:
+    #       cmd = Command(pid,0,"operation noop")
+    #       self.sendMessage(r, RequestMessage(pid, cmd))
+    #       time.sleep(1)
+
+    #return config
+
+  def _reConfig(self, c, initialconfig): 
+    # Create new configuration
+    config = Config(initialconfig.replicas, [], [])
+    for i in range(self.NACCEPTORS):
+      pid = "acceptor %d.%d" % (c,i)
+      Acceptor(self, pid)
+      config.acceptors.append(pid)
+    for i in range(self.NLEADERS):
+      pid = "leader %d.%d" % (c,i)
+      Leader(self, pid, config)
+      config.leaders.append(pid)
+    # Send reconfiguration request
+    for r in config.replicas:
+      pid = "master %d.%d" % (c,i)
+      cmd = ReconfigCommand(pid,0,str(config))
+      self.sendMessage(r, RequestMessage(pid, cmd))
+      time.sleep(1)
+    for i in range(WINDOW-1):
+      pid = "master %d.%d" % (c,i)
       for r in config.replicas:
-        pid = "master %d.%d" % (c,i)
-        cmd = ReconfigCommand(pid,0,str(config))
+        cmd = Command(pid,0,"operation noop")
         self.sendMessage(r, RequestMessage(pid, cmd))
         time.sleep(1)
-      for i in range(WINDOW-1):
-        pid = "master %d.%d" % (c,i)
-        for r in config.replicas:
-          cmd = Command(pid,0,"operation noop")
-          self.sendMessage(r, RequestMessage(pid, cmd))
-          time.sleep(1)
 
     return config
 
-  def _sendConcurrentRequests(self, to, replicas):
+  def _sendConcurrentRequests(self, to, config):
     c = to
     self.time[c] = True
     for i in range(1, c+1):
       pid = "client %d.%d" % (c,i)
-      for r in replicas:
+      for r in config.replicas:
         cmd = Command(pid,c,"operation %d.%d" % (c,i))
         self.sendMessage(r,RequestMessage(pid,cmd))
-        time.sleep(0.5)
-    self.time[c] = False
+        time.sleep(1)
+    #self.time[c] = False
 
   def run(self):
     initialconfig = Config([], [], [])
@@ -89,16 +115,17 @@ class Env:
 
     print "Welcome to PaxosMMC evaluation.\nPlease wait to paxos cluster initialize...\n"
 
-    cfg = self. _initializeCluster(c, initialconfig)
-    time.sleep((self.NCONFIGS)*len(cfg.replicas)*len(cfg.leaders))
+    self. _initializeCluster(c, initialconfig)
+    time.sleep((self.NCONFIGS)*len(initialconfig.replicas)*len(initialconfig.leaders))
     
     raw_input("\nPress Enter to start evaluation...\n")
 
     start_time = time.time()
-    for c in range(0, self.NREQUESTS+1, 1):
+    for c in range(1, self.NREQUESTS+1, 1):
       self.d[c] = 0
       self.time[c] = True
-      self._sendConcurrentRequests(c, cfg.replicas)
+      cfg = self._reConfig(c, initialconfig)
+      self._sendConcurrentRequests(c, cfg)
       #Clients(self, c, cfg.replicas)
 
     end_time = time.time()
