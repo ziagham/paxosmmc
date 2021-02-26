@@ -9,12 +9,6 @@ from replica import Replica
 from utils import *
 from datetime import datetime
 
-# NACCEPTORS = 3
-# NREPLICAS = 2
-# NLEADERS = 2
-# NREQUESTS = 40
-# NCONFIGS = 3
-
 class Env:
     """
     This is the main code in which all processes are created and run. This
@@ -107,9 +101,9 @@ class Env:
         raw_input("\nPress Enter to start evaluation...\n")
 
         start_time = time.time()
-        for c in range(0, self.NREQUESTS+1, 2):
+        for c in range(0, self.NREQUESTS+1, 1):
             self.d[c] = 0
-            #self.time[c] = True
+            self.time[c] = True
             #cfg = self._reConfig(c, initialconfig)
             self._sendConcurrentRequests(c, initialconfig)
             #Clients(self, c, cfg.replicas)
@@ -129,7 +123,21 @@ class Env:
         y = self.od.values()
         yerr = 0.1 + 0.2*math.sqrt(len(y))
         fig, ax = plt.subplots()
-        ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
+        #ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
+        #ax.plot(x, y, linestyle="dashed", marker="o", color="green")
+        ax.errorbar(x, y, yerr=yerr, label='Accept throughput',color="green",marker="o")#,ls='-.')
+        ax.legend(title='Accept throughput')
+        
+        plt.title('PaxosMMC Accept throughput')
+        plt.legend()
+        plt.xlabel('Clients (Request/s)')
+        plt.ylabel('Accept throughput (Request/s)')
+        plt.xlim(0, self.NREQUESTS)
+        plt.ylim(0, self.NREQUESTS)
+        plt.grid(b=True, which='major', color='#dddddd', linestyle='-')
+        #plt.axhline(color='black', lw=0.5)
+        #plt.axvline(color='black', lw=0.5) 
+
         plt.show()
 
         if (self.nopdf == False):
