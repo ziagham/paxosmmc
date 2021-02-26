@@ -123,9 +123,7 @@ class Env:
         y = self.od.values()
         yerr = 0.1 + 0.2*math.sqrt(len(y))
         fig, ax = plt.subplots()
-        #ax.errorbar(x, y, yerr=yerr, marker='s', ms=3, mew=4)
-        #ax.plot(x, y, linestyle="dashed", marker="o", color="green")
-        ax.errorbar(x, y, yerr=yerr, label='Accept throughput',color="green",marker="o")#,ls='-.')
+        ax.errorbar(x, y, yerr=yerr, label='Accept throughput',color="red",marker="o")
         ax.legend(title='Accept throughput')
         
         plt.title('PaxosMMC Accept throughput')
@@ -134,9 +132,7 @@ class Env:
         plt.ylabel('Accept throughput (Request/s)')
         plt.xlim(0, self.NREQUESTS)
         plt.ylim(0, self.NREQUESTS)
-        plt.grid(b=True, which='major', color='#dddddd', linestyle='-')
-        #plt.axhline(color='black', lw=0.5)
-        #plt.axvline(color='black', lw=0.5) 
+        plt.grid(b=True, which='major', color='#ececec', linestyle='-')
 
         plt.show()
 
